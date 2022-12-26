@@ -1,0 +1,35 @@
+version: "3"
+
+volumes:
+  postgresdb_volume:
+  logs_volume:
+
+services:
+
+  lib_db:
+    image: postgres
+    container_name: lib_db
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "12345qwe"
+    networks:
+      - proxy.front-network
+
+  lib:
+    build: .
+    environment:
+      POSTGRES_HOST: "lib_db"
+      POSTGRES_PASSWORD: "12345qwe"
+      POSTGRES_USER: "postgres"
+    ports:
+      - 8000:8000
+    networks:
+      - proxy.front-network
+
+    depends_on:
+      - lib_db
+
+networks:
+  proxy.front-network:
+      driver: bridge
